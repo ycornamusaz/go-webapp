@@ -28,6 +28,7 @@ func RequestLogger(targetMux http.Handler) http.Handler {
 			"Method":          r.Method,
 			"RequestURI":      r.RequestURI,
 			"RequesterIP":     requesterIP,
+			"Header":          r.Header,
 			"X-Forwarded-For": xforwardedfor,
 			"Time":            time.Since(start),
 		}).Info("")
