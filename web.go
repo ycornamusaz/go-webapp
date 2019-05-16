@@ -21,7 +21,9 @@ func getIP() string {
 
 func welcome(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Welcome to my fist go server ! :)")
+	name, _ := os.Hostname()
 	fmt.Fprintln(w, "You are on", getIP())
+	fmt.Fprintln(w, "You are on host", name)
 }
 
 func whoami(w http.ResponseWriter, r *http.Request) {
