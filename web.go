@@ -7,7 +7,7 @@ import (
 )
 
 func welcome(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Welcome to my fist go server !")
+	fmt.Fprintln(w, "Welcome to my fist go server ! :)")
 }
 
 func whoami(w http.ResponseWriter, r *http.Request) {
