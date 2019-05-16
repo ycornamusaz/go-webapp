@@ -21,13 +21,15 @@ func RequestLogger(targetMux http.Handler) http.Handler {
 		targetMux.ServeHTTP(w, r)
 
 		// log request by who(IP address)
-		requesterIP := r.Header.Get("X-Forwarded-For")
+		requesterIP := r.RemoteAddr
+		xforwardedfor := r.Header.Get("X-Forwarded-For")
 
 		log.WithFields(log.Fields{
-			"Method":      r.Method,
-			"RequestURI":  r.RequestURI,
-			"RequesterIP": requesterIP,
-			"Time":        time.Since(start),
+			"Method":          r.Method,
+			"RequestURI":      r.RequestURI,
+			"RequesterIP":     requesterIP,
+			"X-Forwarded-For": xforwardedfor,
+			"Time":            time.Since(start),
 		}).Info("")
 
 	})
