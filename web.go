@@ -2,11 +2,16 @@ package main
 
 import (
 	"fmt"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"net"
 	"net/http"
 	"os"
 )
+
+func init() {
+	log.SetFormatter(&log.JSONFormatter{})
+	log.SetOutput(os.Stdout)
+}
 
 func getIP() string {
 	host, _ := os.Hostname()
@@ -31,7 +36,7 @@ func whoami(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	log.Println("Starting web server...")
+	log.Info("Starting web server...")
 
 	http.HandleFunc("/", welcome)
 	http.HandleFunc("/whoami", whoami)
