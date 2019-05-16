@@ -6,11 +6,31 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"time"
 )
 
 func init() {
 	log.SetFormatter(&log.JSONFormatter{})
 	log.SetOutput(os.Stdout)
+}
+
+func RequestLogger(targetMux http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+
+		targetMux.ServeHTTP(w, r)
+
+		// log request by who(IP address)
+		requesterIP := r.Header.Get("X-Forwarded-For")
+
+		log.WithFields(log.Fields{
+			"Method":      r.Method,
+			"RequestURI":  r.RequestURI,
+			"RequesterIP": requesterIP,
+			"Time":        time.Since(start),
+		}).Info("")
+
+	})
 }
 
 func getIP() string {
@@ -38,9 +58,10 @@ func whoami(w http.ResponseWriter, r *http.Request) {
 func main() {
 	log.Info("Starting web server...")
 
-	http.HandleFunc("/", welcome)
-	http.HandleFunc("/whoami", whoami)
-	err := http.ListenAndServe(":8123", nil)
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", welcome)
+	mux.HandleFunc("/whoami", whoami)
+	err := http.ListenAndServe(":8123", RequestLogger(mux))
 
 	if err != nil {
 		log.Fatalf("Failed to start server:%v", err)
