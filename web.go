@@ -3,11 +3,25 @@ package main
 import (
 	"fmt"
 	"log"
+	"net"
 	"net/http"
+	"os"
 )
+
+func getIP() string {
+	host, _ := os.Hostname()
+	addrs, _ := net.LookupIP(host)
+	for _, addr := range addrs {
+		if ipv4 := addr.To4(); ipv4 != nil {
+			return ipv4.String()
+		}
+	}
+	return ""
+}
 
 func welcome(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Welcome to my fist go server ! :)")
+	fmt.Fprintln(w, "You are on", getIP())
 }
 
 func whoami(w http.ResponseWriter, r *http.Request) {
